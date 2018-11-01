@@ -9,9 +9,10 @@ import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 @Repository
-public class DomainRepositoryImpl implements DomainRepositoryCustom {
+public class OrderRepositoryImpl implements OrderDao {
     @Resource
     private
     MongoTemplate mongoTemplate;
@@ -24,4 +25,15 @@ public class DomainRepositoryImpl implements DomainRepositoryCustom {
         UpdateResult result = mongoTemplate.updateFirst(query, update, OrderEntity.class);
         return result.getModifiedCount();
     }
+
+    @Override
+    public List<OrderEntity> queryOrderByCustomerAndProduct(String customer, String product) {
+        return mongoTemplate.find(
+                Query.query(
+                        Criteria.where("customer").is(customer).and("product").is(product)
+                ),
+                OrderEntity.class);
+    }
+
+
 }
